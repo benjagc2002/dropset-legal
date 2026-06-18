@@ -1,0 +1,24 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DropSet · Reset Password</title>
+<style>:root{--bg:#131313;--fg:#e5e2e1;--mut:#8e8b8a;--coral:#ff5637;--line:#454545}body{background:var(--bg);color:var(--fg);font-family:-apple-system,system-ui,sans-serif;max-width:420px;margin:0 auto;padding:48px 22px}.tag{font-family:ui-monospace,monospace;color:var(--coral);font-size:12px;letter-spacing:2px}h1{letter-spacing:-.5px}input{width:100%;padding:14px;margin:8px 0;background:#1a1a1a;border:1px solid var(--line);color:var(--fg);font-size:16px;box-sizing:border-box}button{width:100%;padding:14px;background:var(--coral);color:#131313;border:none;font-weight:700;font-size:15px;letter-spacing:1px;cursor:pointer;margin-top:8px}.msg{margin-top:16px;font-size:14px}.mut{color:var(--mut)}a{color:var(--coral)}</style>
+</head><body>
+<span class="tag">[ DROPSET // RESET ]</span>
+<h1>Nueva contraseña</h1>
+<p class="mut">Set a new password / Define una nueva contraseña.</p>
+<input id="pw" type="password" placeholder="Nueva contraseña (6+) / New password" autocomplete="new-password">
+<button id="go">GUARDAR / SAVE</button>
+<div class="msg" id="msg"></div>
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+const sb = createClient('https://effdmciojauknfmhbyqv.supabase.co','sb_publishable_5gK1UAYlFT9iiFf7NNr34g_ViDcVaCd')
+const msg = document.getElementById('msg')
+let ready = false
+sb.auth.onAuthStateChange((e)=>{ if(e==='PASSWORD_RECOVERY'||e==='SIGNED_IN') ready=true })
+document.getElementById('go').onclick = async ()=>{
+  const pw = document.getElementById('pw').value
+  if(pw.length<6){ msg.textContent='Mínimo 6 caracteres / Min 6 chars.'; return }
+  msg.textContent='...'
+  const { error } = await sb.auth.updateUser({ password: pw })
+  msg.innerHTML = error ? ('Error: '+error.message) : '✓ Listo. Vuelve a la app y entra con tu nueva contraseña. / Done. Return to the app and sign in.'
+}
+</script>
+</body></html>
